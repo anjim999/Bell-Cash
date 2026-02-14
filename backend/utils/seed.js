@@ -54,16 +54,29 @@ const seedData = async () => {
 
     // Generate 30 transactions as requested
     for (let i = 0; i < 30; i++) {
-      const monthsAgo = Math.floor(Math.random() * 12);
-      const daysAgo = Math.floor(Math.random() * 30);
+      let monthsAgo, daysAgo, isIncome;
+      
+      if (i === 0) {
+        // Guarantee an income for the current month
+        monthsAgo = 0;
+        daysAgo = Math.floor(Math.random() * 20);
+        isIncome = true;
+      } else if (i === 1) {
+        // Guarantee an expense for the current month
+        monthsAgo = 0;
+        daysAgo = Math.floor(Math.random() * 20);
+        isIncome = false;
+      } else {
+        monthsAgo = Math.floor(Math.random() * 12);
+        daysAgo = Math.floor(Math.random() * 30);
+        isIncome = Math.random() < 0.2; // 20% chance of income
+      }
+
       const date = new Date(now.getFullYear(), now.getMonth() - monthsAgo, now.getDate() - daysAgo);
       
       const category = categories[Math.floor(Math.random() * categories.length)];
       const titleList = titles[category] || ['Transaction'];
       const title = titleList[Math.floor(Math.random() * titleList.length)];
-      
-      // Mix of income and expenses
-      const isIncome = Math.random() < 0.2; // 20% chance of income
       
       let amount;
       if (isIncome) {
