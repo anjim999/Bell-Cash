@@ -20,14 +20,16 @@ const getTransactions = async (req, res, next) => {
       sortOrder = 'desc',
     } = req.query;
 
-    // Build query
-    const query = { userId: req.user.id };
+    // Build query - use _id for consistency with aggregations
+    const query = { userId: req.user._id };
 
-    // Text search
-    if (search) {
+    // Text search - trim and search title, notes, and category
+    if (search && search.trim()) {
+      const searchRegex = { $regex: search.trim(), $options: 'i' };
       query.$or = [
-        { title: { $regex: search, $options: 'i' } },
-        { notes: { $regex: search, $options: 'i' } },
+        { title: searchRegex },
+        { notes: searchRegex },
+        { category: searchRegex },
       ];
     }
 
@@ -51,13 +53,15 @@ const getTransactions = async (req, res, next) => {
     // Amount range filter
     if (minAmount || maxAmount) {
       query.amount = {};
-      if (minAmount) query.amount.$gte = Number(minAmount);
-      if (maxAmount) query.amount.$lte = Number(maxAmount);
+      if (minAmount && !isNaN(minAmount)) query.amount.$gte = Number(minAmount);
+      if (maxAmount && !isNaN(maxAmount)) query.amount.$lte = Number(maxAmount);
     }
 
     // Build sort
     const sort = {};
-    sort[sortBy] = sortOrder === 'asc' ? 1 : -1;
+    const allowedSortFields = ['date', 'amount', 'title'];
+    const finalSortBy = allowedSortFields.includes(sortBy) ? sortBy : 'date';
+    sort[finalSortBy] = sortOrder === 'asc' ? 1 : -1;
 
     // Execute query with pagination
     const skip = (Number(page) - 1) * Number(limit);
@@ -95,7 +99,7 @@ const getTransaction = async (req, res, next) => {
   try {
     const transaction = await Transaction.findOne({
       _id: req.params.id,
-      userId: req.user.id,
+      userId: req.user._id,
     });
 
     if (!transaction) {
@@ -132,7 +136,7 @@ const createTransaction = async (req, res, next) => {
       req.body;
 
     const transaction = await Transaction.create({
-      userId: req.user.id,
+      userId: req.user._id,
       title,
       amount,
       type: type || 'expense',
@@ -169,7 +173,7 @@ const updateTransaction = async (req, res, next) => {
 
     let transaction = await Transaction.findOne({
       _id: req.params.id,
-      userId: req.user.id,
+      userId: req.user._id,
     });
 
     if (!transaction) {
@@ -205,7 +209,7 @@ const deleteTransaction = async (req, res, next) => {
   try {
     const transaction = await Transaction.findOne({
       _id: req.params.id,
-      userId: req.user.id,
+      userId: req.user._id,
     });
 
     if (!transaction) {
