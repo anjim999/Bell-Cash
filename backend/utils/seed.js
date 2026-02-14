@@ -56,16 +56,16 @@ const seedData = async () => {
     for (let i = 0; i < 30; i++) {
       let monthsAgo, daysAgo, isIncome;
       
-      if (i === 0) {
-        // Guarantee an income for the current month
+      if (i < 5) {
+        // Guarantee 5 transactions in the last 7 days
         monthsAgo = 0;
-        daysAgo = Math.floor(Math.random() * 20);
-        isIncome = true;
-      } else if (i === 1) {
-        // Guarantee an expense for the current month
+        daysAgo = Math.floor(Math.random() * 7);
+        isIncome = i === 0; // One income, four expenses
+      } else if (i < 10) {
+        // Guarantee 5 more in the last 14 days
         monthsAgo = 0;
-        daysAgo = Math.floor(Math.random() * 20);
-        isIncome = false;
+        daysAgo = Math.floor(Math.random() * 14);
+        isIncome = Math.random() < 0.2;
       } else {
         monthsAgo = Math.floor(Math.random() * 12);
         daysAgo = Math.floor(Math.random() * 30);

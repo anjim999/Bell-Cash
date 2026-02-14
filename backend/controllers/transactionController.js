@@ -1,4 +1,5 @@
 const { validationResult } = require('express-validator');
+const mongoose = require('mongoose');
 const Transaction = require('../models/Transaction');
 
 // @desc    Get all transactions for user (with pagination, search, filter)
@@ -254,7 +255,7 @@ const getDashboardStats = async (req, res, next) => {
     ] = await Promise.all([
       // All-time total
       Transaction.aggregate([
-        { $match: { userId: req.user._id } },
+        { $match: { userId: new mongoose.Types.ObjectId(req.user._id) } },
         {
           $group: {
             _id: '$type',
@@ -268,7 +269,7 @@ const getDashboardStats = async (req, res, next) => {
       Transaction.aggregate([
         {
           $match: {
-            userId: req.user._id,
+            userId: new mongoose.Types.ObjectId(req.user._id),
             date: { $gte: startOfMonth },
           },
         },
@@ -285,7 +286,7 @@ const getDashboardStats = async (req, res, next) => {
       Transaction.aggregate([
         {
           $match: {
-            userId: req.user._id,
+            userId: new mongoose.Types.ObjectId(req.user._id),
             date: { $gte: startOfLastMonth, $lte: endOfLastMonth },
           },
         },
@@ -302,7 +303,7 @@ const getDashboardStats = async (req, res, next) => {
       Transaction.aggregate([
         {
           $match: {
-            userId: req.user._id,
+            userId: new mongoose.Types.ObjectId(req.user._id),
             type: 'expense',
             date: { $gte: startOfMonth },
           },
@@ -321,7 +322,7 @@ const getDashboardStats = async (req, res, next) => {
       Transaction.aggregate([
         {
           $match: {
-            userId: req.user._id,
+            userId: new mongoose.Types.ObjectId(req.user._id),
             date: {
               $gte: new Date(now.getFullYear(), now.getMonth() - 5, 1),
             },
@@ -349,7 +350,7 @@ const getDashboardStats = async (req, res, next) => {
       Transaction.aggregate([
         {
           $match: {
-            userId: req.user._id,
+            userId: new mongoose.Types.ObjectId(req.user._id),
             type: 'expense',
             date: {
               $gte: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000),
