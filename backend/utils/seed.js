@@ -52,25 +52,38 @@ const seedData = async () => {
     const transactions = [];
     const now = new Date();
 
-    // Generate 60 transactions over the last 6 months
-    for (let i = 0; i < 60; i++) {
-      const daysAgo = Math.floor(Math.random() * 180);
-      const date = new Date(now.getTime() - daysAgo * 24 * 60 * 60 * 1000);
+    // Generate 120 transactions over the last 12 months for richer data
+    for (let i = 0; i < 120; i++) {
+      const monthsAgo = Math.floor(Math.random() * 12);
+      const daysAgo = Math.floor(Math.random() * 30);
+      const date = new Date(now.getFullYear(), now.getMonth() - monthsAgo, now.getDate() - daysAgo);
+      
       const category = categories[Math.floor(Math.random() * categories.length)];
       const titleList = titles[category] || ['Transaction'];
       const title = titleList[Math.floor(Math.random() * titleList.length)];
-      const isIncome = Math.random() < 0.15; // 15% chance of income
+      
+      // Mix of income and expenses
+      const isIncome = Math.random() < 0.2; // 20% chance of income
+      
+      let amount;
+      if (isIncome) {
+        // Larger income amounts (Salary, Freelance, etc.)
+        amount = Math.round((Math.random() * 50000 + 40000) * 100) / 100;
+      } else {
+        // Varied expense amounts
+        amount = Math.round((Math.random() * 5000 + 100) * 100) / 100;
+        // Occasional large expense
+        if (Math.random() < 0.1) amount += 5000;
+      }
 
       transactions.push({
         userId: user._id,
-        title: isIncome ? 'Salary Credit' : title,
-        amount: isIncome
-          ? Math.round((Math.random() * 40000 + 30000) * 100) / 100
-          : Math.round((Math.random() * 4000 + 50) * 100) / 100,
+        title: isIncome ? 'Income Credit' : title,
+        amount,
         type: isIncome ? 'income' : 'expense',
         category: isIncome ? 'Other' : category,
         date,
-        notes: Math.random() > 0.5 ? `Sample note for ${title}` : '',
+        notes: Math.random() > 0.3 ? `Generated sample data for ${title}` : '',
         isRecurring: Math.random() < 0.1,
       });
     }

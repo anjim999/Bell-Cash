@@ -74,7 +74,21 @@ npm run dev
 
 ## 🌐 Deployment (Vercel)
 
-The project is configured for easy deployment on Vercel. Just connect your GitHub repo and Vercel will auto-detect the settings.
+The project is configured for easy deployment on Vercel. 
+
+### Critical Vercel Configuration:
+1.  **Frontend Deployment**:
+    -   Connect your repo to Vercel.
+    -   Set **Root Directory** to `frontend`.
+    -   Add Environment Variable: `VITE_API_URL` = your hosted backend API URL (e.g., `https://bellcorp-api.onrender.com/api`).
+2.  **Backend Deployment**:
+    -   Deploy the `backend` folder to a service like Render, Railway, or Heroku.
+    -   Add Environment Variables: `MONGODB_URI`, `JWT_SECRET`, `FRONTEND_URL` (your Vercel app URL).
+
+### 🧪 Demo Credentials
+If you've run the seed script, you can use:
+- **Email**: `demo@bellcorp.com`
+- **Password**: `demo123456`
 
 ## 📄 License
 
