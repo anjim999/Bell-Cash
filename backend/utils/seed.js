@@ -52,8 +52,8 @@ const seedData = async () => {
     const transactions = [];
     const now = new Date();
 
-    // Generate 120 transactions over the last 12 months for richer data
-    for (let i = 0; i < 120; i++) {
+    // Generate 30 transactions as requested
+    for (let i = 0; i < 30; i++) {
       const monthsAgo = Math.floor(Math.random() * 12);
       const daysAgo = Math.floor(Math.random() * 30);
       const date = new Date(now.getFullYear(), now.getMonth() - monthsAgo, now.getDate() - daysAgo);
